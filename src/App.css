@@ -352,7 +352,7 @@
 }
 
 .timeline-tick text {
-  fill: #718084;
+  fill: var(--text-dim);
   font: 9px var(--mono);
 }
 
