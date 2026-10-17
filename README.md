@@ -2,6 +2,8 @@
 
 **An interactive audio rehearsal lab for exploring speaker timing.**
 
+**Live demo:** [mneang.github.io/wavefront-audio-lab](https://mneang.github.io/wavefront-audio-lab/)
+
 WAVEFRONT helps beginners and volunteer AV operators understand why two speakers playing the same sound may reach audience positions at different times. Select a listener in the venue map, hear the modeled arrival gap, align for that position, then compare the result at another listener.
 
 ## What It Does

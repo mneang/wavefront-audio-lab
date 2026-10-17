@@ -54,7 +54,8 @@ Documentation:
 - **Run calculation tests:** `npm run test -- --run`.
 - **Check the production build:** `npm run build`.
 - **Audio activation:** the first playback starts or resumes the `AudioContext` directly from the user's click. If the browser rejects or suspends playback, show Audio Unavailable and allow an explicit Retry Playback click.
-- **Public repository:** [github.com/mneang/wavefront-audio-lab](https://github.com/mneang/wavefront-audio-lab). A live deployment is optional and is not configured for this proof of concept.
+- **Public repository:** [github.com/mneang/wavefront-audio-lab](https://github.com/mneang/wavefront-audio-lab).
+- **Optional live demo:** [mneang.github.io/wavefront-audio-lab](https://mneang.github.io/wavefront-audio-lab/), deployed with GitHub Pages from `main` by `.github/workflows/deploy-pages.yml`.
 - **Recording:** run locally, allow the development server port through the editor, and record the default L1 Original → Align → Play Aligned → select L3 sequence. Verify browser tab and output volume before recording. The hackathon still requires a short demo video and public GitHub repository; deployment is optional and does not replace either.
 
 ## Look and Feel
