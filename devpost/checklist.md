@@ -50,15 +50,15 @@ Build mode: fast
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — focused investigation of the shared immutable timing snapshot and how it keeps the geometry, Web Audio scheduler, and visible markers consistent.
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — focused recap connected the 22.07 ms audibility uncertainty to coordinate-based tests and the learner's successful listening check.
+- [x] Optional edit and transfer reflection addressed — no optional code edit was needed before shipping; transfer practice already reflected in the learner's deliberate prioritization of real audio proof and verification.
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [what actually happened; real document/test/code references; unfinished work if interrupted]
-Route and stops: [actual paths and symbols; guided stops completed, or reference-only route]
-Edit outcome: [tried/kept/reverted/declined/not applicable; verification if changed]
-Reflection: [offered/answered/declined/already covered — personal answer belongs only in the ignored profile]
-Activity mode: [live app and editor, explicit static fallback, focused alternative, prior practice, or recap]
+Activity and evidence: Focused recap of the learner's uncertainty about whether a calculated 22.07 ms L1 gap would be perceptible. `src/acoustics/geometry.test.ts` and `src/acoustics/timing.test.ts` verify the modeled values; the learner's Slice 1 listening check confirmed the audible result on their setup.
+Route and stops: Reference route only, not a live tour: `src/App.tsx` (`play`, `selectListener`); `src/acoustics/geometry.ts` (`calculateGeometricArrivals`); `src/acoustics/timing.ts` (`createPlaybackSnapshot`); `src/audio/playbackController.ts` (`play`); `src/components/VenueMap.tsx`; `src/components/ArrivalTimeline.tsx`).
+Edit outcome: Not applicable; no optional code edit was requested or needed before shipping.
+Reflection: Already covered by the learner's repeated choice to prioritize real audio proof, measurement-derived values, and early verification.
+Activity mode: Focused alternative using completed hands-on practice, followed by a brief evidence-based recap.
 
 ## Revisions
 

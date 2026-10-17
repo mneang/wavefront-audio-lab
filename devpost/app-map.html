@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>WAVEFRONT | App Map</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Segoe UI Variable", "Segoe UI", sans-serif;
+      color: #e9f0f1;
+      background: #111719;
+      --panel: #182124;
+      --line: #344246;
+      --muted: #a1afb2;
+      --cyan: #60d6e2;
+      --amber: #edb263;
+      --green: #68c89e;
+      --mono: "SFMono-Regular", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    main { width: min(980px, 100%); margin: 0 auto; padding: 32px 22px 52px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 22px; }
+    .eyebrow { color: var(--muted); font: 700 11px var(--mono); }
+    h1 { margin: 8px 0; font-size: 32px; }
+    h2 { margin: 28px 0 12px; font-size: 19px; }
+    p { color: var(--muted); line-height: 1.55; }
+    .summary { max-width: 720px; }
+    .diagram { margin-top: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); }
+    .diagram svg { display: block; width: 100%; height: auto; }
+    .diagram text { fill: #e9f0f1; font: 13px "Segoe UI", sans-serif; }
+    .diagram .small { fill: #a1afb2; font-size: 11px; }
+    .diagram .box { fill: #202b2e; stroke: #536368; stroke-width: 1.4; }
+    .diagram .geometry { stroke: var(--cyan); }
+    .diagram .sound { stroke: var(--amber); }
+    .diagram .visual { stroke: var(--green); }
+    .diagram .arrow { fill: none; stroke-width: 2; }
+    .caption { margin: 10px 2px 0; font-size: 12px; }
+    .route { display: grid; gap: 10px; }
+    details { border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+    summary { padding: 14px 16px; color: #e9f0f1; cursor: pointer; font-weight: 650; }
+    details p { margin: 0; padding: 0 16px 14px; }
+    a { color: var(--cyan); text-underline-offset: 3px; }
+    code { color: #f4c680; font: 12px var(--mono); overflow-wrap: anywhere; }
+    .pointers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0; list-style: none; }
+    .pointers li { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+    .pointers span { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+    .practice { border-left: 3px solid var(--green); padding: 2px 0 2px 14px; }
+    .run { padding: 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+    .run code { display: block; margin: 6px 0; }
+    footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 620px) {
+      main { padding: 22px 14px 36px; }
+      h1 { font-size: 26px; }
+      .pointers { grid-template-columns: 1fr; }
+      .diagram { padding: 8px; }
+      .diagram text { font-size: 12px; }
+      .diagram .small { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">WAVEFRONT / PROJECT MAP</p>
+      <h1>How the timing demo works</h1>
+      <p class="summary">WAVEFRONT helps beginners explore why two virtual speakers can reach listeners at different times. Coordinates drive a simplified geometric model; one timing snapshot then feeds both browser audio scheduling and the visible arrival markers.</p>
+    </header>
+
+    <section class="diagram" aria-labelledby="flow-title">
+      <h2 id="flow-title">One action, one timing snapshot</h2>
+      <svg viewBox="0 0 900 250" role="img" aria-labelledby="flow-desc">
+        <title id="flow-desc">A listener selection flows through geometry and timing, then one snapshot drives audio and visuals.</title>
+        <defs>
+          <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#60d6e2" /></marker>
+          <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#68c89e" /></marker>
+          <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#edb263" /></marker>
+        </defs>
+        <rect class="box" x="16" y="76" width="150" height="86" rx="5" />
+        <text x="91" y="109" text-anchor="middle">Choose L1 / L2 / L3</text>
+        <text class="small" x="91" y="134" text-anchor="middle">or Play Original / Aligned</text>
+
+        <rect class="box geometry" x="214" y="76" width="175" height="86" rx="5" />
+        <text x="301" y="109" text-anchor="middle">Geometry + timing</text>
+        <text class="small" x="301" y="134" text-anchor="middle">coordinates -> arrivals -> delay</text>
+
+        <rect class="box" x="438" y="76" width="170" height="86" rx="5" />
+        <text x="523" y="109" text-anchor="middle">Immutable snapshot</text>
+        <text class="small" x="523" y="134" text-anchor="middle">listener + mode + arrivals</text>
+
+        <rect class="box sound" x="662" y="20" width="220" height="78" rx="5" />
+        <text x="772" y="51" text-anchor="middle">Web Audio</text>
+        <text class="small" x="772" y="74" text-anchor="middle">same generated sound, timed sources</text>
+
+        <rect class="box visual" x="662" y="146" width="220" height="78" rx="5" />
+        <text x="772" y="177" text-anchor="middle">Venue map + timeline</text>
+        <text class="small" x="772" y="200" text-anchor="middle">same arrivals, paths, markers</text>
+
+        <path class="arrow geometry" d="M166 119 H207" marker-end="url(#arrow-cyan)" />
+        <path class="arrow geometry" d="M389 119 H431" marker-end="url(#arrow-cyan)" />
+        <path class="arrow sound" d="M608 105 C630 105 630 59 655 59" marker-end="url(#arrow-amber)" />
+        <path class="arrow visual" d="M608 133 C630 133 630 185 655 185" marker-end="url(#arrow-green)" />
+      </svg>
+      <p class="caption">The two audio sources are virtual and mix through one browser output. The map animation may be slowed for legibility, but timing values are not.</p>
+    </section>
+
+    <section aria-labelledby="route-title">
+      <h2 id="route-title">Reference route through the code</h2>
+      <p>This is a reference route, not a live code tour. Open each stop to trace the behavior.</p>
+      <div class="route">
+        <details>
+          <summary>1. The selected position becomes a timing snapshot</summary>
+          <p>Start at <a href="../src/App.tsx"><code>src/App.tsx</code></a>: <code>selectListener</code> retains the applied correction and switches the idle view, while <code>play</code> requests a snapshot for the current listener and playback version.</p>
+        </details>
+        <details>
+          <summary>2. Coordinates calculate arrivals and alignment</summary>
+          <p><a href="../src/acoustics/venue.ts"><code>venue.ts</code></a> holds the 20 m by 12 m room and fixed coordinates. <a href="../src/acoustics/geometry.ts"><code>geometry.ts</code></a> calculates Euclidean distances and arrivals; <a href="../src/acoustics/timing.ts"><code>timing.ts</code></a> applies the emission correction and freezes the resulting snapshot.</p>
+        </details>
+        <details>
+          <summary>3. Audio and visuals consume that same snapshot</summary>
+          <p><a href="../src/audio/playbackController.ts"><code>PlaybackController.play</code></a> schedules both copies of the generated buffer from snapshot offsets. <a href="../src/components/VenueMap.tsx"><code>VenueMap</code></a> draws the paths and wavefront, while <a href="../src/components/ArrivalTimeline.tsx"><code>ArrivalTimeline</code></a> positions markers from the snapshot's final arrivals.</p>
+        </details>
+      </div>
+    </section>
+
+    <section aria-labelledby="change-title">
+      <h2 id="change-title">To change this, start here</h2>
+      <ul class="pointers">
+        <li><span>Room or speaker/listener coordinates</span><a href="../src/acoustics/venue.ts"><code>src/acoustics/venue.ts</code></a></li>
+        <li><span>Distance, delay, or snapshot logic</span><a href="../src/acoustics/geometry.ts"><code>geometry.ts</code></a><br><a href="../src/acoustics/timing.ts"><code>timing.ts</code></a></li>
+        <li><span>Generated clap and scheduled playback</span><a href="../src/audio/createClapBuffer.ts"><code>src/audio/createClapBuffer.ts</code></a><br><a href="../src/audio/playbackController.ts"><code>src/audio/playbackController.ts</code></a></li>
+        <li><span>Map, listener markers, or arrival animation</span><a href="../src/components/VenueMap.tsx"><code>src/components/VenueMap.tsx</code></a></li>
+        <li><span>Timeline scale and arrival markers</span><a href="../src/components/ArrivalTimeline.tsx"><code>src/components/ArrivalTimeline.tsx</code></a></li>
+        <li><span>Colors, layout, and responsive styling</span><a href="../src/App.css"><code>src/App.css</code></a><br><a href="../src/index.css"><code>src/index.css</code></a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="practice-title">
+      <h2 id="practice-title">A practice to reuse</h2>
+      <p class="practice">Separate a risky calculation from the interface, test it against concrete expected values, and then verify the real-world behavior independently. In this project, geometry and timing tests cover the 22.07 ms L1 correction and the +32.87 ms L3 trade-off; the listener's hands-on audio test separately established that the modeled gap was perceptible on their setup.</p>
+    </section>
+
+    <section class="run" aria-labelledby="run-title">
+      <h2 id="run-title">Run it again</h2>
+      <code>npm install</code>
+      <code>npm run dev -- --host 0.0.0.0</code>
+      <code>npm run test -- --run</code>
+      <code>npm run build</code>
+      <p>Open the forwarded Vite port, normally 5173. Source snapshot: commit <code>6b0c08d</code>. This map is a reference to that code and may drift if the app changes.</p>
+    </section>
+
+    <footer>Standalone project guide. No account, backend, external service, or network access is needed to read it.</footer>
+  </main>
+</body>
+</html>
