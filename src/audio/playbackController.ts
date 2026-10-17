@@ -19,6 +19,11 @@ export class PlaybackController {
   private buffer: AudioBuffer | null = null
   private activePlayback: ActivePlayback | null = null
   private generation = 0
+  private readonly createContext: () => AudioContext
+
+  constructor(createContext: () => AudioContext = () => new window.AudioContext()) {
+    this.createContext = createContext
+  }
 
   async play(snapshot: TimingSnapshot, callbacks: PlaybackCallbacks): Promise<void> {
     this.cancel()
@@ -97,11 +102,7 @@ export class PlaybackController {
 
   private getContext(): AudioContext {
     if (!this.context) {
-      const AudioContextConstructor = window.AudioContext
-      if (!AudioContextConstructor) {
-        throw new Error('Web Audio is unavailable in this browser.')
-      }
-      this.context = new AudioContextConstructor()
+      this.context = this.createContext()
     }
     return this.context
   }

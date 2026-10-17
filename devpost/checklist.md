@@ -19,14 +19,14 @@ Build mode: fast
   Learner check: Start the app with `npm run dev -- --host 0.0.0.0`. At the forwarded local URL, play Original at L1, apply alignment, play Aligned, then play Original again. Try laptop speakers or headphones and report whether the initial mismatch and tighter aligned result are clearly perceptible; also check that Original stays uncorrected.
   Commit: `Prove calculated L1 audio alignment`
 
-- [ ] **2. You can compare alignment across all three listeners without stale playback**
+- [x] **2. You can compare alignment across all three listeners without stale playback**
   Becomes usable: Selecting L1, L2, or L3 shows Original timing before any correction and Current Alignment after correction. Listener changes retain the correction, cancel in-flight playback, and safely ignore completion from canceled sessions; Reset returns to L1, no correction, Ready.
   Why now: Once the core audio is real, this completes the defining cross-position trade-off and makes the interaction reliable when users change position mid-playback.
   PRD ref: `prd.md > The Core Journey`, `Venue Map and Listener Selection`, `Original and Aligned Playback`, `Playback Status and Failure`, `States and Boundaries`.
   Spec ref: `spec.md > The Core Journey Through the System`, `Components`, `Acoustic Model and Verified Geometry`, `Timing Snapshot and Data Flow`, `Alignment Rule`, `Test Plan`, `Important Failure Modes`.
   Build: Add React listener selection and separate selected position, stored correction, displayed timing snapshot, playback state, and active session identity. Show all three calculated results and retained correction. Cancel playback on listener change/reset, reject stale callbacks, and keep Original snapshots uncorrected.
   Verify (mechanical): Run `npm run test -- --run` and `npm run build`; verify state/snapshot tests for all listeners, retained correction, Original replay, cancellation, and reset.
-  Learner check: Align at L1, select L3, and confirm the Current Alignment view shows Fill delay about +22.07 ms and a remaining difference about +32.87 ms without replaying. Start playback and switch listeners before it finishes; confirm the old playback and completion state do not reappear.
+  Learner check: Learner reviewed screenshots at L1/L2/L3 after applying the L1 correction and confirmed 0.00 ms, -9.45 ms, +32.87 ms, and retained Fill +22.07 ms. Earlier hands-on playback confirmed the Original/Aligned audio difference. Controller tests cover pending-activation cancellation and stale completion; Reset and listener changes both call the cancellation path.
   Commit: `Add listener comparison and safe playback cancellation`
 
 - [ ] **3. You can see the calculated sound journey in the venue map and timeline**

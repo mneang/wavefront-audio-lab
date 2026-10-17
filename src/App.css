@@ -248,6 +248,41 @@
   line-height: 1.5;
 }
 
+.listener-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 14px 0 4px;
+}
+
+.listener-button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--text-muted);
+  background: #141b1e;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.listener-button:hover {
+  border-color: #65777b;
+  color: var(--text-strong);
+}
+
+.listener-button.is-selected {
+  border-color: var(--cyan);
+  color: var(--text-strong);
+  background: #1b3034;
+}
+
+.listener-button:focus-visible {
+  outline: 2px solid var(--text-strong);
+  outline-offset: 2px;
+}
+
 .button {
   min-height: 44px;
   padding: 0 14px;

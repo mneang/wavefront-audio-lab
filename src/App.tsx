@@ -7,13 +7,14 @@ import {
   type TimingSnapshot,
 } from './acoustics/timing'
 import { calculateGeometricArrivals } from './acoustics/geometry'
-import { LISTENERS, SPEAKERS } from './acoustics/venue'
+import { LISTENERS, SPEAKERS, type ListenerId } from './acoustics/venue'
 import { PlaybackController } from './audio/playbackController'
 import './App.css'
 
 type PlaybackStatus = 'Ready' | 'Playing' | 'Complete' | 'Audio Unavailable'
 
 function App() {
+  const [selectedListenerId, setSelectedListenerId] = useState<ListenerId>('L1')
   const [correction, setCorrection] = useState<SpeakerCorrection | null>(null)
   const [snapshot, setSnapshot] = useState<TimingSnapshot>(() =>
     createCurrentViewSnapshot('L1', null),
@@ -21,10 +22,11 @@ function App() {
   const [playbackStatus, setPlaybackStatus] = useState<PlaybackStatus>('Ready')
   const [hasPlayedOriginal, setHasPlayedOriginal] = useState(false)
   const playbackController = useRef<PlaybackController | null>(null)
-  const initialArrivals = calculateGeometricArrivals('L1')
+  const selectedListener = LISTENERS[selectedListenerId]
+  const geometricArrivals = calculateGeometricArrivals(selectedListenerId)
 
   function play(version: 'original' | 'aligned') {
-    const nextSnapshot = createPlaybackSnapshot('L1', version, correction)
+    const nextSnapshot = createPlaybackSnapshot(selectedListenerId, version, correction)
     const controller = (playbackController.current ??= new PlaybackController())
 
     setSnapshot(nextSnapshot)
@@ -38,16 +40,24 @@ function App() {
     })
   }
 
-  function alignForL1() {
+  function alignForSelectedPosition() {
     playbackController.current?.cancel()
-    const nextCorrection = calculateAlignmentCorrection('L1')
+    const nextCorrection = calculateAlignmentCorrection(selectedListenerId)
     setCorrection(nextCorrection)
-    setSnapshot(createCurrentViewSnapshot('L1', nextCorrection))
+    setSnapshot(createCurrentViewSnapshot(selectedListenerId, nextCorrection))
+    setPlaybackStatus('Ready')
+  }
+
+  function selectListener(listenerId: ListenerId) {
+    playbackController.current?.cancel()
+    setSelectedListenerId(listenerId)
+    setSnapshot(createCurrentViewSnapshot(listenerId, correction))
     setPlaybackStatus('Ready')
   }
 
   function reset() {
     playbackController.current?.cancel()
+    setSelectedListenerId('L1')
     setCorrection(null)
     setSnapshot(createCurrentViewSnapshot('L1', null))
     setPlaybackStatus('Ready')
@@ -56,6 +66,7 @@ function App() {
 
   const difference = snapshot.differenceMs
   const earlierSpeaker = difference < 0 ? SPEAKERS.fill.label : SPEAKERS.main.label
+  const signedDifference = `${difference > 0 ? '+' : ''}${difference.toFixed(2)}`
   const differenceContext =
     Math.abs(difference) < 0.01 ? 'Arrivals aligned' : `${earlierSpeaker} arrives first`
   const isPlaying = playbackStatus === 'Playing'
@@ -86,11 +97,11 @@ function App() {
         </div>
         <div className="position-chip">
           <span className="status-dot" />
-          LISTENER <strong>L1</strong>
+          LISTENER <strong>{selectedListenerId}</strong>
         </div>
       </section>
 
-      <section className="workbench" aria-label="L1 timing and playback workbench">
+      <section className="workbench" aria-label={`${selectedListenerId} timing and playback workbench`}>
         <div className="timing-panel">
           <div className="panel-heading">
             <div>
@@ -107,13 +118,13 @@ function App() {
             {(['main', 'fill'] as const).map((speakerId) => {
               const speaker = SPEAKERS[speakerId]
               const arrival = snapshot.arrivals[speakerId]
-              const geometric = initialArrivals[speakerId]
+              const geometric = geometricArrivals[speakerId]
               return (
                 <div className={`arrival-row speaker-${speakerId}`} key={speakerId}>
                   <span className="speaker-mark" aria-hidden="true" />
                   <div className="speaker-name">
                     <strong>{speaker.label}</strong>
-                    <span>{geometric.distanceMeters.toFixed(2)} m from L1</span>
+                    <span>{geometric.distanceMeters.toFixed(2)} m from {selectedListenerId}</span>
                   </div>
                   <div className="arrival-value">
                     <strong>{arrival.finalArrivalMs.toFixed(2)}</strong>
@@ -126,7 +137,7 @@ function App() {
 
           <div className="difference-readout" aria-live="polite">
             <span>TIMING DIFFERENCE</span>
-            <strong>{Math.abs(difference).toFixed(2)}<small> ms</small></strong>
+            <strong>{signedDifference}<small> ms</small></strong>
             <span className="difference-context">{differenceContext}</span>
           </div>
 
@@ -142,7 +153,20 @@ function App() {
 
         <aside className="control-panel">
           <p className="eyebrow">LISTENING POSITION</p>
-          <h2>{LISTENERS.L1.label}</h2>
+          <h2>{selectedListener.label}</h2>
+          <div className="listener-picker" role="group" aria-label="Select audience listening position">
+            {(Object.keys(LISTENERS) as ListenerId[]).map((listenerId) => (
+              <button
+                className={`listener-button${listenerId === selectedListenerId ? ' is-selected' : ''}`}
+                type="button"
+                key={listenerId}
+                aria-pressed={listenerId === selectedListenerId}
+                onClick={() => selectListener(listenerId)}
+              >
+                {listenerId}
+              </button>
+            ))}
+          </div>
           <p className="control-copy">
             Compare two identical generated sounds, scheduled from the calculated
             arrival times.
@@ -151,7 +175,7 @@ function App() {
             <span className="play-icon" aria-hidden="true">▶</span>
             {hasPlayedOriginal ? 'Play Original' : 'Hear the Difference'}
           </button>
-          <button className="button button-align" type="button" onClick={alignForL1} disabled={isPlaying || correction !== null}>
+          <button className="button button-align" type="button" onClick={alignForSelectedPosition} disabled={isPlaying}>
             Align for This Position
           </button>
           <button className="button button-secondary" type="button" onClick={() => play('aligned')} disabled={isPlaying || correction === null}>
