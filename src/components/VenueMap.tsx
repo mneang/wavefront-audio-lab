@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react'
+import { useEffect, useState, type KeyboardEvent } from 'react'
 import { LISTENERS, ROOM, SPEAKERS, type ListenerId, type SpeakerId } from '../acoustics/venue'
 import type { TimingSnapshot } from '../acoustics/timing'
 import type { PlaybackStatus } from '../App'
@@ -47,6 +47,24 @@ function handleListenerKeyDown(
   }
 }
 
+function usePrefersReducedMotion(): boolean {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const updatePreference = (event: MediaQueryListEvent) => {
+      setPrefersReducedMotion(event.matches)
+    }
+
+    mediaQuery.addEventListener('change', updatePreference)
+    return () => mediaQuery.removeEventListener('change', updatePreference)
+  }, [])
+
+  return prefersReducedMotion
+}
+
 export function VenueMap({
   listenerId,
   snapshot,
@@ -55,6 +73,7 @@ export function VenueMap({
   onSelectListener,
 }: VenueMapProps) {
   const isPlaybackVisible = playbackStatus === 'Playing' || playbackStatus === 'Complete'
+  const prefersReducedMotion = usePrefersReducedMotion()
   const roomBounds = `M ${MAP.left} ${MAP.top} H ${MAP.left + MAP.width} V ${MAP.top + MAP.height} H ${MAP.left} Z`
 
   return (
@@ -97,7 +116,7 @@ export function VenueMap({
           ))}
         </g>
 
-        {isPlaybackVisible && (['main', 'fill'] as const).map((speakerId) => {
+        {isPlaybackVisible && !prefersReducedMotion && (['main', 'fill'] as const).map((speakerId) => {
           const speaker = SPEAKERS[speakerId]
           const arrival = snapshot.arrivals[speakerId]
           const path = pathFor(speakerId, snapshot.listenerId)
@@ -166,7 +185,11 @@ export function VenueMap({
         <span><i className="legend-dot speaker-main" /> Main</span>
         <span><i className="legend-dot speaker-fill" /> Fill</span>
         <span><i className="legend-listener" /> Audience positions</span>
-        {isPlaybackVisible && <span className="slow-motion-note">Arrival motion · 16× slow motion</span>}
+        {isPlaybackVisible && (
+          <span className="slow-motion-note">
+            {prefersReducedMotion ? 'Wave motion reduced by system preference' : 'Arrival motion · 16× slow motion'}
+          </span>
+        )}
       </div>
     </div>
   )
