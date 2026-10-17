@@ -1,0 +1,11 @@
+# Local personal learning context
+/devpost/learner-profile.md
+
+# Local credentials; allow a secret-free example template
+.env
+.env.*
+!.env.example
+
+# Generated application output
+node_modules/
+dist/

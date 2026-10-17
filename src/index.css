@@ -1,0 +1,41 @@
+:root {
+  font-family: 'Avenir Next', 'Segoe UI Variable', 'Segoe UI', sans-serif;
+  color: #e7eff0;
+  background: #111719;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --canvas: #111719;
+  --panel: #171f22;
+  --line: #2c393d;
+  --line-soft: #243034;
+  --text-strong: #edf4f5;
+  --text-muted: #a0afb2;
+  --text-dim: #748387;
+  --cyan: #60d6e2;
+  --amber: #edb263;
+  --green: #68c89e;
+  --mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--canvas);
+}
+
+button {
+  font-family: inherit;
+}
+
+#root {
+  min-height: 100vh;
+}
