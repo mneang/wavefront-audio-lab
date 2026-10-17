@@ -90,12 +90,330 @@
 
 .workbench {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
-  min-height: 390px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.8fr);
+  min-height: 660px;
   border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
   background: var(--panel);
+}
+
+.map-panel {
+  min-width: 0;
+  padding: 24px 26px 20px;
+  border-right: 1px solid var(--line);
+}
+
+.map-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 2px 16px;
+}
+
+.map-panel-heading h2 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 17px;
+  font-weight: 620;
+}
+
+.dimension-tag {
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.venue-map-wrap {
+  overflow: hidden;
+  border: 1px solid #344247;
+  border-radius: 4px;
+  background: #141c1f;
+}
+
+.venue-map {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 760 / 470;
+}
+
+.room-shape {
+  fill: #182225;
+  stroke: #56676b;
+  stroke-width: 1.5;
+}
+
+.map-axis-label {
+  fill: #849497;
+  font: 10px var(--mono);
+}
+
+.sound-path {
+  fill: none;
+  stroke-width: 2;
+  opacity: 0.68;
+}
+
+.sound-path.speaker-main {
+  stroke: var(--cyan);
+}
+
+.sound-path.speaker-fill {
+  stroke: var(--amber);
+  stroke-dasharray: 6 5;
+}
+
+.map-speaker rect {
+  fill: #1c272a;
+  stroke-width: 1.5;
+}
+
+.map-speaker path {
+  stroke: none;
+}
+
+.map-speaker text {
+  fill: #dce7e8;
+  font: 700 10px var(--sans);
+}
+
+.map-speaker.speaker-main rect {
+  stroke: var(--cyan);
+}
+
+.map-speaker.speaker-main path {
+  fill: var(--cyan);
+}
+
+.map-speaker.speaker-fill rect {
+  stroke: var(--amber);
+}
+
+.map-speaker.speaker-fill path {
+  fill: var(--amber);
+}
+
+.map-listener {
+  cursor: pointer;
+  outline: none;
+}
+
+.listener-ring {
+  fill: #12191b;
+  stroke: #a7b6b8;
+  stroke-width: 1.5;
+  transition: stroke 130ms ease, fill 130ms ease;
+}
+
+.listener-core {
+  fill: #d5dfe0;
+}
+
+.map-listener text {
+  fill: #c7d1d2;
+  font: 700 11px var(--mono);
+  pointer-events: none;
+}
+
+.map-listener:hover .listener-ring,
+.map-listener:focus-visible .listener-ring {
+  stroke: var(--text-strong);
+  stroke-width: 2.5;
+}
+
+.map-listener.is-selected .listener-ring {
+  fill: #143239;
+  stroke: var(--cyan);
+  stroke-width: 2;
+}
+
+.map-listener.is-selected .listener-core {
+  fill: var(--cyan);
+}
+
+.map-listener.is-selected text {
+  fill: #eafcfd;
+}
+
+.listener-halo {
+  fill: #3bd1df;
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.wave-pulse {
+  opacity: 0.94;
+}
+
+.wave-pulse.speaker-main {
+  fill: var(--cyan);
+}
+
+.wave-pulse.speaker-fill {
+  fill: var(--amber);
+}
+
+.map-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  min-height: 42px;
+  padding: 8px 2px 0;
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.map-legend > span:not(.slow-motion-note) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legend-dot.speaker-main {
+  background: var(--cyan);
+}
+
+.legend-dot.speaker-fill {
+  background: var(--amber);
+}
+
+.legend-listener {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #c7d1d2;
+  border-radius: 50%;
+}
+
+.slow-motion-note {
+  margin-left: auto;
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.timeline-panel {
+  margin-top: 19px;
+  padding: 16px 16px 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #141b1e;
+}
+
+.timeline-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.timeline-heading .eyebrow {
+  margin-bottom: 4px;
+}
+
+.timeline-heading h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.timeline-unit {
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.arrival-timeline {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 7px;
+  overflow: visible;
+}
+
+.timeline-tick line {
+  stroke: #354246;
+  stroke-width: 1;
+}
+
+.timeline-tick text {
+  fill: #718084;
+  font: 9px var(--mono);
+}
+
+.timeline-track .track-rail {
+  stroke: #3a484b;
+  stroke-width: 1;
+}
+
+.timeline-track .track-label {
+  fill: #bdc9ca;
+  font: 10px var(--sans);
+}
+
+.timeline-track .arrival-stem {
+  stroke-width: 1.5;
+}
+
+.timeline-track .arrival-marker {
+  stroke: #141b1e;
+  stroke-width: 2;
+}
+
+.timeline-track .arrival-label {
+  font: 9px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.timeline-track.speaker-main .arrival-marker,
+.timeline-track.speaker-main .arrival-stem {
+  fill: var(--cyan);
+  stroke: var(--cyan);
+}
+
+.timeline-track.speaker-main .arrival-label {
+  fill: var(--cyan);
+}
+
+.timeline-track.speaker-fill .arrival-marker,
+.timeline-track.speaker-fill .arrival-stem {
+  fill: var(--amber);
+  stroke: var(--amber);
+}
+
+.timeline-track.speaker-fill .arrival-label {
+  fill: var(--amber);
+}
+
+.timeline-difference {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.timeline-difference strong {
+  color: var(--text-strong);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .timing-panel {
@@ -242,6 +560,16 @@
   padding: 28px 24px;
 }
 
+.control-panel .panel-heading {
+  padding-bottom: 17px;
+}
+
+.playback-controls {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+
 .control-copy {
   margin: 10px 0 24px;
   font-size: 13px;
@@ -367,6 +695,13 @@
   margin-top: 8px;
 }
 
+.secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .reset-button:hover,
 .model-note button:hover {
   color: var(--text-strong);
@@ -442,6 +777,21 @@
 
   .workbench {
     grid-template-columns: 1fr;
+  }
+
+  .map-panel {
+    padding: 18px 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .map-legend {
+    gap: 10px 12px;
+  }
+
+  .slow-motion-note {
+    width: 100%;
+    margin-left: 0;
   }
 
   .timing-panel {

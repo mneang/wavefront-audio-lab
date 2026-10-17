@@ -6,12 +6,13 @@ import {
   type SpeakerCorrection,
   type TimingSnapshot,
 } from './acoustics/timing'
-import { calculateGeometricArrivals } from './acoustics/geometry'
 import { LISTENERS, SPEAKERS, type ListenerId } from './acoustics/venue'
 import { PlaybackController } from './audio/playbackController'
+import { ArrivalTimeline } from './components/ArrivalTimeline'
+import { VenueMap } from './components/VenueMap'
 import './App.css'
 
-type PlaybackStatus = 'Ready' | 'Playing' | 'Complete' | 'Audio Unavailable'
+export type PlaybackStatus = 'Ready' | 'Playing' | 'Complete' | 'Audio Unavailable'
 
 function App() {
   const [selectedListenerId, setSelectedListenerId] = useState<ListenerId>('L1')
@@ -21,15 +22,16 @@ function App() {
   )
   const [playbackStatus, setPlaybackStatus] = useState<PlaybackStatus>('Ready')
   const [hasPlayedOriginal, setHasPlayedOriginal] = useState(false)
+  const [playbackRunId, setPlaybackRunId] = useState(0)
   const playbackController = useRef<PlaybackController | null>(null)
   const selectedListener = LISTENERS[selectedListenerId]
-  const geometricArrivals = calculateGeometricArrivals(selectedListenerId)
 
   function play(version: 'original' | 'aligned') {
     const nextSnapshot = createPlaybackSnapshot(selectedListenerId, version, correction)
     const controller = (playbackController.current ??= new PlaybackController())
 
     setSnapshot(nextSnapshot)
+    setPlaybackRunId((runId) => runId + 1)
     setPlaybackStatus('Playing')
     controller.play(nextSnapshot, {
       onComplete: () => {
@@ -76,6 +78,9 @@ function App() {
     'aligned-playback': 'Aligned Playback',
     'current-alignment': 'Current Alignment',
   }[snapshot.view]
+  const canAlign =
+    isPlaying === false &&
+    (correction !== null || playbackStatus === 'Complete' || playbackStatus === 'Audio Unavailable')
 
   return (
     <main className="studio-shell">
@@ -89,10 +94,10 @@ function App() {
       <section className="intro" id="top">
         <div>
           <p className="eyebrow">VIRTUAL SPEAKER TIMING</p>
-          <h1>Hear the arrival gap.</h1>
+          <h1>Hear where timing breaks.</h1>
           <p className="intro-copy">
-            Two virtual speaker signals. One listener. A real timing difference
-            calculated from venue geometry.
+            Rehearse speaker alignment before the real setup. Explore how arrival
+            timing changes across a small venue.
           </p>
         </div>
         <div className="position-chip">
@@ -102,11 +107,29 @@ function App() {
       </section>
 
       <section className="workbench" aria-label={`${selectedListenerId} timing and playback workbench`}>
-        <div className="timing-panel">
+        <div className="map-panel">
+          <div className="map-panel-heading">
+            <div>
+              <p className="eyebrow">VENUE OVERVIEW</p>
+              <h2>Community auditorium</h2>
+            </div>
+            <span className="dimension-tag">{viewLabel} · 20 m × 12 m</span>
+          </div>
+          <VenueMap
+            listenerId={selectedListenerId}
+            snapshot={snapshot}
+            playbackStatus={playbackStatus}
+            playbackRunId={playbackRunId}
+            onSelectListener={selectListener}
+          />
+          <ArrivalTimeline snapshot={snapshot} />
+        </div>
+
+        <aside className="control-panel">
           <div className="panel-heading">
             <div>
-              <p className="eyebrow">ARRIVAL TIMING</p>
-              <h2>{viewLabel}</h2>
+              <p className="eyebrow">LISTENING POSITION</p>
+              <h2>{selectedListener.label}</h2>
             </div>
             <span className={`playback-status ${playbackStatus === 'Audio Unavailable' ? 'is-error' : ''}`}>
               <span className="status-dot" />
@@ -114,46 +137,6 @@ function App() {
             </span>
           </div>
 
-          <div className="arrival-list">
-            {(['main', 'fill'] as const).map((speakerId) => {
-              const speaker = SPEAKERS[speakerId]
-              const arrival = snapshot.arrivals[speakerId]
-              const geometric = geometricArrivals[speakerId]
-              return (
-                <div className={`arrival-row speaker-${speakerId}`} key={speakerId}>
-                  <span className="speaker-mark" aria-hidden="true" />
-                  <div className="speaker-name">
-                    <strong>{speaker.label}</strong>
-                    <span>{geometric.distanceMeters.toFixed(2)} m from {selectedListenerId}</span>
-                  </div>
-                  <div className="arrival-value">
-                    <strong>{arrival.finalArrivalMs.toFixed(2)}</strong>
-                    <span>ms arrival</span>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          <div className="difference-readout" aria-live="polite">
-            <span>TIMING DIFFERENCE</span>
-            <strong>{signedDifference}<small> ms</small></strong>
-            <span className="difference-context">{differenceContext}</span>
-          </div>
-
-          <div className="correction-readout">
-            <span>APPLIED CORRECTION</span>
-            <strong>
-              {correction
-                ? `${SPEAKERS[correction.speakerId].label} delay: +${correction.delayMs.toFixed(2)} ms`
-                : 'None'}
-            </strong>
-          </div>
-        </div>
-
-        <aside className="control-panel">
-          <p className="eyebrow">LISTENING POSITION</p>
-          <h2>{selectedListener.label}</h2>
           <div className="listener-picker" role="group" aria-label="Select audience listening position">
             {(Object.keys(LISTENERS) as ListenerId[]).map((listenerId) => (
               <button
@@ -167,24 +150,59 @@ function App() {
               </button>
             ))}
           </div>
-          <p className="control-copy">
-            Compare two identical generated sounds, scheduled from the calculated
-            arrival times.
-          </p>
-          <button className="button button-primary" type="button" onClick={() => play('original')} disabled={isPlaying}>
-            <span className="play-icon" aria-hidden="true">▶</span>
-            {hasPlayedOriginal ? 'Play Original' : 'Hear the Difference'}
-          </button>
-          <button className="button button-align" type="button" onClick={alignForSelectedPosition} disabled={isPlaying}>
-            Align for This Position
-          </button>
-          <button className="button button-secondary" type="button" onClick={() => play('aligned')} disabled={isPlaying || correction === null}>
-            <span className="play-icon" aria-hidden="true">▶</span>
-            Play Aligned
-          </button>
-          <button className="reset-button" type="button" onClick={reset}>
-            Reset to Original
-          </button>
+
+          <div className="arrival-list">
+            {(['main', 'fill'] as const).map((speakerId) => {
+              const speaker = SPEAKERS[speakerId]
+              const arrival = snapshot.arrivals[speakerId]
+              return (
+                <div className={`arrival-row speaker-${speakerId}`} key={speakerId}>
+                  <span className="speaker-mark" aria-hidden="true" />
+                  <div className="speaker-name">
+                    <strong>{speaker.label}</strong>
+                    <span>{arrival.distanceMeters.toFixed(2)} m · {arrival.emissionDelayMs > 0 ? `+${arrival.emissionDelayMs.toFixed(2)} ms emission` : 'no added delay'}</span>
+                  </div>
+                  <div className="arrival-value">
+                    <strong>{arrival.finalArrivalMs.toFixed(2)}</strong>
+                    <span>ms arrival</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          <div className="difference-readout" aria-live="polite">
+            <span>TIMING DIFFERENCE · FILL − MAIN</span>
+            <strong>{signedDifference}<small> ms</small></strong>
+            <span className="difference-context">{differenceContext}</span>
+          </div>
+
+          <div className="correction-readout">
+            <span>APPLIED CORRECTION</span>
+            <strong>
+              {correction
+                ? `${SPEAKERS[correction.speakerId].label} delay: +${correction.delayMs.toFixed(2)} ms`
+                : 'None'}
+            </strong>
+          </div>
+
+          <div className="playback-controls">
+            <button className="button button-primary" type="button" onClick={() => play('original')} disabled={isPlaying}>
+              <span className="play-icon" aria-hidden="true">▶</span>
+              {hasPlayedOriginal ? 'Play Original' : 'Hear the Difference'}
+            </button>
+            <button className="button button-align" type="button" onClick={alignForSelectedPosition} disabled={!canAlign}>
+              Align for This Position
+            </button>
+            <button className="button button-secondary" type="button" onClick={() => play('aligned')} disabled={isPlaying || correction === null}>
+              <span className="play-icon" aria-hidden="true">▶</span>
+              Play Aligned
+            </button>
+          </div>
+
+          <div className="secondary-actions">
+            <button className="reset-button" type="button" onClick={reset}>Reset to Original</button>
+          </div>
 
           {playbackStatus === 'Audio Unavailable' && (
             <div className="audio-error" role="alert">

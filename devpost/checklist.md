@@ -29,24 +29,24 @@ Build mode: fast
   Learner check: Learner reviewed screenshots at L1/L2/L3 after applying the L1 correction and confirmed 0.00 ms, -9.45 ms, +32.87 ms, and retained Fill +22.07 ms. Earlier hands-on playback confirmed the Original/Aligned audio difference. Controller tests cover pending-activation cancellation and stale completion; Reset and listener changes both call the cancellation path.
   Commit: `Add listener comparison and safe playback cancellation`
 
-- [ ] **3. You can see the calculated sound journey in the venue map and timeline**
+- [x] **3. You can see the calculated sound journey in the venue map and timeline**
   Becomes usable: The main workspace shows the fixed speakers, selectable listeners, sound paths, timing panel, and instrument-style timeline. Map pulses and timeline markers use the exact labeled Original, Aligned, or Current Alignment snapshot used by playback; the workspace is clear and usable on a laptop.
   Why now: With geometry and audio behavior already proven, this connects the visible centerpiece to working data rather than risking a polished animation that only simulates the kernel.
   PRD ref: `prd.md > Screens and Layout`, `Look and Feel`, `Venue Map and Listener Selection`, `Original and Aligned Playback`, `Playback Status and Failure`.
   Spec ref: `spec.md > Look and Feel`, `Components`, `Timing Snapshot and Data Flow`, `Test Plan`, `Important Failure Modes`.
   Build: Add the SVG venue map and arrival timeline, map-based listener selection, selected-listener focus, paths and accurately ordered pulses. Label slow-motion visualization where used. Add the title/model disclosure, timing/correction panel, controls, playback states and recovery copy; refine responsive workstation styling without adding screens or unrelated features.
   Verify (mechanical): Run `npm run test -- --run` and `npm run build`; manually exercise Original → Align → Aligned playback → select L3, and confirm displayed labels/markers match each timing snapshot.
-  Learner check: At the local app, follow the full L1-to-L3 demonstration. Confirm the selected listener is clear, arrivals appear in the same order as the numbers and sound, the alignment markers converge at L1, and the retained Fill delay creates the expected L3 trade-off.
+  Learner check: Learner tested the complete experience and approved it: venue and listener selection, Original/Aligned playback, L1 marker alignment, retained +22.07 ms Fill correction and +32.87 ms L3 trade-off, playback controls, listener changes, reset, timeline, and animations all behaved as expected; no blocking issues.
   Commit: `Connect timing snapshots to venue visualization`
 
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — learner clearly heard two closely spaced Original impacts and a tighter Aligned sound; controls worked, no issues were reported, and the approved coordinates are retained.
-- [ ] Final kick-the-tires exploration and feedback completed — after Slice 3, exercise the complete L1 → alignment → L3 flow and identify any fixes before marking the proof of concept ready.
+- [x] Final kick-the-tires exploration and feedback completed — learner exercised the full Slice 3 acceptance areas, reported no blocking issues, and approved the proof of concept.
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — all learner feedback resolved; automated checks pass and learner explicitly approved the completed proof of concept.
 
 ## Code Tour and App Map
 
@@ -61,3 +61,5 @@ Reflection: [offered/answered/declined/already covered — personal answer belon
 Activity mode: [live app and editor, explicit static fallback, focused alternative, prior practice, or recap]
 
 ## Revisions
+
+- Kept the one-use workspace header, timing panel, and playback controls inline in `App.tsx`, with styles split between `App.css` and `index.css`, instead of introducing separate files for each; the map and timeline remain separate because their SVG rendering is a distinct behavior. This keeps the first working POC lean without changing approved behavior.
