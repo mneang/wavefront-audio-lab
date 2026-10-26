@@ -1,64 +1,43 @@
 # WAVEFRONT
 
-**An interactive audio rehearsal lab for exploring speaker timing.**
+**Hear where timing breaks.** Two virtual speakers. Three listening positions. One fix that makes another seat worse.
 
-**Live demo:** [mneang.github.io/wavefront-audio-lab](https://mneang.github.io/wavefront-audio-lab/)
+**[▶ Try the live lab](https://mneang.github.io/wavefront-audio-lab/)** · No login · Headphones recommended
 
-WAVEFRONT helps beginners and volunteer AV operators understand why two speakers playing the same sound may reach audience positions at different times. Select a listener in the venue map, hear the modeled arrival gap, align for that position, then compare the result at another listener.
+## Problem
 
-## What It Does
+Two speakers can play the same sound, yet their signals reach audience positions at different times. Correcting that mismatch for one listener can make it worse for another.
 
-- Shows a top-down 20 m by 12 m venue with two virtual speakers and three audience listening positions.
-- Calculates speaker-to-listener distances and sound arrival times from coordinates.
-- Plays one generated percussion sound through two virtual signals using the browser's Web Audio API.
-- Applies an emission delay to the earlier-arriving virtual speaker and compares Original with Aligned playback.
-- Shows arrival times, signed timing difference, sound paths, animated wavefronts, and a matching arrival timeline.
-- Demonstrates the trade-off: aligning at L1 leaves approximately 0 ms difference there, while the retained correction produces approximately +32.87 ms at L3.
+## Why existing approaches fall short for beginners
 
-## Try It Locally
+Static diagrams show timing numbers but cannot let you **hear** them. Professional acoustic tools serve real-world measurement, not a quick conceptual introduction. WAVEFRONT bridges the learning gap with a ready-to-use browser experiment—no measurement equipment needed.
 
-Requirements: Node.js and npm versions compatible with Vite 8, plus a modern browser with Web Audio API support.
+## Live demo: 60-second challenge
 
-```sh
-npm install
-npm run dev -- --host 0.0.0.0
-```
+1. **Hear it:** At **L1**, press **Hear the Difference**. Fill arrives **22.07 ms earlier** than Main.
+2. **Align it:** Press **Align for This Position**, then **Play Aligned**. A **+22.07 ms delay** brings L1's modeled difference to **0.00 ms**.
+3. **Question it:** Select **L3** without resetting. Compare **Play Original** (**+10.80 ms**) with **Play Aligned** (**+32.87 ms**)—the mismatch is now **over three times larger**.
 
-Open the local URL printed by Vite, normally `http://localhost:5173/`. Start playback with the on-screen button to activate browser audio. Use headphones or speakers at a comfortable volume.
+**One correction. Different seats. Different outcomes.**
 
-Run the checks:
+## Architecture
 
-```sh
-npm run test -- --run
-npm run build
-```
+**Venue coordinates → TypeScript sound-travel model (343 m/s) → one timing snapshot → native Web Audio + SVG visualization.** Two scheduled copies of a generated clap create the audible result; the venue map and arrival timeline follow the *same calculations*, not a hardcoded animation. Built with **React, Vite, TypeScript, SVG/CSS, and Vitest**. No backend or external API.
 
-## The Model
+## Sponsor technology & learning process
 
-The room dimensions are 20 m by 12 m. Coordinates are measured in metres from the front-left corner. Main is at `(3, 1)`, Fill is at `(14, 5)`, and the listening positions are L1 `(12, 9)`, L2 `(17, 10)`, and L3 `(3, 9)`. Arrival time is calculated from straight-line distance using a fixed speed of sound of 343 m/s.
+Built with **Devpost's Learn Skill Pack** and **GitHub Copilot**, progressing from [scope](devpost/scope.md) → [product requirements](devpost/prd.md) → [technical spec](devpost/spec.md) → [verified build stages](devpost/checklist.md). My first test was whether the mathematically calculated **22 ms** gap could actually be heard; I validated the sound *before* building out the visual workspace.
 
-| Listening position | Original Fill − Main | With the L1 Fill correction |
-| --- | ---: | ---: |
-| L1 | −22.07 ms | 0.00 ms |
-| L2 | −31.52 ms | −9.45 ms |
-| L3 | +10.80 ms | +32.87 ms |
+## Impact
 
-A positive correction means a later emission from the virtual speaker; it does not change sound speed. The two virtual signals are mixed through one browser audio output, not sent to separate physical loudspeakers.
+For beginner audio learners and volunteer AV operators, WAVEFRONT makes speaker timing **visible, audible, and explorable** before working with real equipment. It is a simplified educational simulation—not a professional acoustic measurement or room-calibration tool.
 
-This is a simplified geometric sound-arrival model, not a venue measurement or room-acoustics simulator. It does not account for reflections, barriers, temperature, speaker response, or device latency. The browser can report that scheduled audio sources finished; it cannot confirm what a listener physically heard. The default timing has been verified as audible on the project author's setup, but audibility can vary by device and listening conditions.
+## Screenshots
 
-## Built With
+<img width="960" height="540" alt="WAVEFRONT: L1 aligned at 0.00 ms while the same correction produces a +32.87 ms difference at L3" src="https://github.com/user-attachments/assets/055a317f-14d2-48dc-8e3f-c3c59dfb1387" />
 
-Vite, React, TypeScript, native Web Audio API, SVG, CSS, and Vitest. No backend, database, account, or external API is required.
+## Future work
 
-## Project Documents
+Editable speaker layouts, guided lessons, and richer acoustic models.
 
-- [Approved scope](devpost/scope.md)
-- [Product requirements](devpost/prd.md)
-- [Technical specification](devpost/spec.md)
-- [Build checklist and verification record](devpost/checklist.md)
-- [Code and data-flow map](devpost/app-map.html)
-
-## License
-
-Released under the MIT License. See [LICENSE](LICENSE).
+**Run locally:** `npm ci` → `npm run dev` · **Check:** `npm run test -- --run` · [MIT License](LICENSE)
